@@ -10,7 +10,11 @@ const wechaty = WechatyBuilder.build({
 }) // get a Wechaty instance
 
 function onLogin(user) {
-	log.info('StarterBot', 'User %s logged in', user)
+	log.info('StarterBot', 'User %s logged in', user.name())
+}
+
+function onLogout(user) {
+	log.info('StarterBot', 'User %s logged out', user.name())
 }
 
 function onScan(qrcodeUrl, status) {
@@ -66,5 +70,12 @@ async function onMessaeg(message) {
 wechaty
   .on('scan', onScan)
   .on('login', onLogin)
+  .on('logout', onLogout)
   .on('message', onMessaeg)
-wechaty.start()
+  .start()
+  .catch(async (e) => {
+    console.error('Bot start() fail:', e);
+	log.error('StarterBot', 'Bot start() fail: %s', e)
+    await bot.stop();
+    process.exit(-1);
+});
